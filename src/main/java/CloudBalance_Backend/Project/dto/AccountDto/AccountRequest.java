@@ -12,8 +12,8 @@ import lombok.NoArgsConstructor;
 
     public class AccountRequest{
         private String accountName;
-        private String accountID;
+        private String accountId;
         private String arn;
-        private String region;
+//        private String region;
     }
 

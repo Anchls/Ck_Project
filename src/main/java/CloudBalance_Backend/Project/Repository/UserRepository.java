@@ -9,8 +9,16 @@ import java.util.Optional;
 public interface UserRepository extends JpaRepository<User, Long> {
 
 
-    @Query("SELECT u FROM User u") // HQL query
-    List<User> findAll();
+    @Query(value = """
+            SELECT u.id as id,
+            u.name as name,
+            u.email as email,
+            u.last_login as last_login,
+            r.role as role
+            FROM users u LEFT JOIN roles r
+            ON u.role_id = r.id
+            where u.email != :email_id
+            """, nativeQuery = true)    List<User> findAll();
     Boolean existsByUsername(String username);
 
     Optional<User> findByEmail(String email);

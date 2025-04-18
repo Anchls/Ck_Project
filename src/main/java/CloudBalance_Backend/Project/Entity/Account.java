@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -20,7 +21,5 @@ public class Account {
     @Column(name = "account_name", nullable = false)
     private String accountName;
     private String arn;
-    private String isorphan;
-    @OneToMany(mappedBy = "account") // ✅ match this name exactly
-    private List<User> users;
-    }
+
+}

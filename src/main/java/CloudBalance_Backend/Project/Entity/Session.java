@@ -20,7 +20,11 @@ import java.time.LocalDateTime;
         private Long id;
         private String accessToken;
         private LocalDateTime createdAt;
-        private LocalDateTime updatedAt;
+
+        @Column(name = "login_time")
+        private LocalDateTime loginTime;
+
+
 
         @Column(nullable = false)
         private Boolean isValid;

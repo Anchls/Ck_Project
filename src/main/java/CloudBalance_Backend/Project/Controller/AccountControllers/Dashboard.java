@@ -21,15 +21,16 @@ public class Dashboard {
         return "Hell0";
     }
 
+
     @GetMapping("/user-management")
-    @PreAuthorize("hasRole('ADMIN')")
-        public ResponseEntity<List<User>> getUserManagement() {
+    @PreAuthorize("hasAnyRole('ADMIN' ,'READ_ONLY')")
+        public ResponseEntity<List<User>> getAll() {
             List<User> users = userRepository.findAll();
             return ResponseEntity.ok(users);
     }
 
-    @PostMapping("/onboarding")
-    @PreAuthorize("hasRole('ADMIN')")
+    @GetMapping("/onboarding")
+    @PreAuthorize("hasAnyRole('ADMIN' ,'READ_ONLY')")
     public ResponseEntity<String> onboarding() {
         return ResponseEntity.ok("Onboarding Dashboard - Admin Only");
     }
@@ -41,7 +42,7 @@ public class Dashboard {
     }
 
     @PostMapping("/aws-services")
-    @PreAuthorize("hasAnyRole('ADMIN', user-management'READ_ONLY', 'CUSTOMER')")
+    @PreAuthorize("hasAnyRole('ADMIN', 'READ_ONLY', 'CUSTOMER')")
     public ResponseEntity<String> awsServices() {
         return ResponseEntity.ok("AWS Services Dashboard - All Roles");
     }
