@@ -7,10 +7,10 @@ import CloudBalance_Backend.Project.dto.AuthDto.AuthRequest;
 import CloudBalance_Backend.Project.dto.AuthDto.AuthResponse;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 public class AccountService {
-
-
 
         private final AccountRepository accountRepository;
 
@@ -23,9 +23,12 @@ public class AccountService {
             account.setAccountName(request.getAccountName());
             account.setAccountId(request.getAccountId());
             account.setArn(request.getArn());
-
             accountRepository.save(account);
             return request;
+        }
+
+         public List<Account> getAllAccounts() {
+            return accountRepository.findAll();
         }
     }
 

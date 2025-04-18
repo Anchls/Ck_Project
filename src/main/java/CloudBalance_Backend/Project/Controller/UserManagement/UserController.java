@@ -33,6 +33,7 @@ public class UserController {
     private final UserService userService;
     private final UserRepository userRepository;
 
+
     @PostMapping("/create")
 //    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<?> createUser(@RequestBody UserRequest userRequest) {
@@ -65,9 +66,7 @@ public class UserController {
         return ResponseEntity.status(HttpStatus.CREATED).body(savedUser);
     }
 
-    @GetMapping("/accounts/orphan")
-    public ResponseEntity<List<Account>> getOrphanAccounts() {
-        return ResponseEntity.ok(userService.getOrphanAccounts());
-    }
+
+
 }
 
