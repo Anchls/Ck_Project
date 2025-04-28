@@ -2,12 +2,12 @@ package CloudBalance_Backend.Project.dto.UserDto;
 
 import lombok.Data;
 
-import java.util.List;
 import java.util.Set;
 
 //user table
+//validations?
 @Data
-public class UserRequest {
+public class UserRequestDto {
     private Long id;
     private String role;
     private String email;

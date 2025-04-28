@@ -3,8 +3,9 @@ package CloudBalance_Backend.Project.dto.UserDto;
 import lombok.Data;
 
 import java.util.List;
+//use validations
 @Data
-public class CreateUserRequest {
+public class CreateUserRequestDto {
         private String username;
         private  String password;
         private String email;

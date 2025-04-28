@@ -1,4 +1,4 @@
-package CloudBalance_Backend.Project.service;
+package CloudBalance_Backend.Project.service.UserService;
 
 import CloudBalance_Backend.Project.Entity.User;
 import lombok.Data;
@@ -16,7 +16,6 @@ public class UserDetailsImpl implements UserDetails {
     private String username;
     private String email;
     private String password;
-
     private Collection<? extends GrantedAuthority> authorities;
 
     public UserDetailsImpl(Long id, String username, String email, String password,
@@ -32,7 +31,6 @@ public class UserDetailsImpl implements UserDetails {
         List<GrantedAuthority> authorities = List.of(
                 new SimpleGrantedAuthority(user.getRole().name())
         );
-
         return new UserDetailsImpl(
                 user.getId(),
                 user.getUsername(),
@@ -54,7 +52,7 @@ public class UserDetailsImpl implements UserDetails {
 
     @Override
     public String getUsername() {
-        return email; // because you login with email
+        return email;
     }
 
     @Override

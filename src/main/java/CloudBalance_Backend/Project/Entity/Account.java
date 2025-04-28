@@ -4,10 +4,6 @@ import jakarta.persistence.*;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-
 @Data
 @NoArgsConstructor
 @Entity
@@ -22,4 +18,13 @@ public class Account {
     private String accountName;
     private String arn;
 
+
+//    private String region;
+
+    @ManyToOne
+    @JoinColumn(name = "user_id", referencedColumnName = "id")
+    private User user;
+//
+//    public void getRegion(String region) {
+//    }
 }

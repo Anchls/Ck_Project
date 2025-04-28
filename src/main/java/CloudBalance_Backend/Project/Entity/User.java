@@ -31,7 +31,8 @@ public class User {
     @Column(nullable = false)
     private Role role;
     @Column(name = "last_login")
-    private String lastLogin;
+    private LocalDateTime lastLogin;
+
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Session> sessions;

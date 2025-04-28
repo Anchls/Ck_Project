@@ -16,13 +16,13 @@ public class JwtService {
     private final String key = "afdskbfdskskjvffvjkvvfd,mfvn,dsm,alkdjvnvkfdjvnvk";
     private final long EXPIRATION = 15 * 60 * 60 * 1000; // 15 minutes
 
-    private SecretKey getKey(){
+    private SecretKey getKey() {
         return Keys.hmacShaKeyFor(key.getBytes());
     }
 
-    public String generateToken(String username,String role) {
+    public String generateToken(String email, String role) {
         return Jwts.builder()
-                .setSubject(username)
+                .setSubject(email)
                 .claim("role", role)
                 .setIssuedAt(new Date())
                 .setExpiration(new Date(System.currentTimeMillis() + EXPIRATION))
@@ -30,19 +30,19 @@ public class JwtService {
                 .compact();
     }
 
-    public String extractUsername(String token) {
-        return Jwts.parserBuilder()
-                .setSigningKey(getKey())
-                .build()
-                .parseClaimsJws(token)
-                .getBody()
-                .getSubject();
-    }
+//    public String extractUsername(String token) {
+//        return Jwts.parserBuilder()
+//                .setSigningKey(getKey())
+//                .build()
+//                .parseClaimsJws(token)
+//                .getBody()
+//                .getSubject();
+//    }
 
-    public boolean isTokenValid(String token, String username) {
-        return extractUsername(token).equals(username) && !isTokenExpired(token);
-    }
-     public boolean ValidateToken(String token) {
+    //    public boolean isTokenValid(String token, String username) {
+//        return extractUsername(token).equals(username) && !isTokenExpired(token);
+//    }
+    public boolean ValidateToken(String token) {
         try {
             Jwts.parserBuilder()
                     .setSigningKey(getKey())
@@ -56,25 +56,26 @@ public class JwtService {
         } catch (RuntimeException e) {
             log.error("JWT token is malformed: {}", e.getMessage());
         }
-      return false;
-     }
-     public String getRoleFromToken(String token) {
-         return Jwts.parserBuilder()
-                 .setSigningKey(getKey())
-                 .build()
-                 .parseClaimsJws(token)
-                 .getBody()
-                 .get("role", String.class);
-     }
+        return false;
+    }
 
-     public String getUsernameFromToken(String token) {
-         return Jwts.parserBuilder()
-                 .setSigningKey(getKey())
-                 .build()
-                 .parseClaimsJws(token)
-                 .getBody()
-                 .getSubject();
-     }
+    public String getRoleFromToken(String token) {
+        return Jwts.parserBuilder()
+                .setSigningKey(getKey())
+                .build()
+                .parseClaimsJws(token)
+                .getBody()
+                .get("role", String.class);
+    }
+
+    public String getEmailFromToken(String token) {
+        return Jwts.parserBuilder()
+                .setSigningKey(getKey())
+                .build()
+                .parseClaimsJws(token)
+                .getBody()
+                .getSubject();
+    }
 
     private boolean isTokenExpired(String token) {
         return Jwts.parserBuilder()

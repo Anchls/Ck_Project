@@ -1,8 +1,7 @@
-package CloudBalance_Backend.Project.service;
+package CloudBalance_Backend.Project.service.AuthService;
 
 import CloudBalance_Backend.Project.Confi.JwtService;
 import CloudBalance_Backend.Project.Entity.BlackListedToken;
-import CloudBalance_Backend.Project.Entity.Session;
 import CloudBalance_Backend.Project.Exception.CustomException;
 import CloudBalance_Backend.Project.Repository.BlackListedTokenRepository;
 import CloudBalance_Backend.Project.dto.AuthDto.AuthRequest;
@@ -46,7 +45,7 @@ public class AuthService {
     JwtService jwtService;
 
 
-    public ResponseEntity<?> signup(SignupRequest request) {        // Check if user already exists
+    public ResponseEntity<?> signup(SignupRequest request) {
         if (userRepository.existsByUsername(request.getUsername())) {
             return ResponseEntity
                     .badRequest()
@@ -58,7 +57,6 @@ public class AuthService {
                     .body(new MessageResponse("Error: Email is already in use!"));
         }
 
-
         User user = User.builder()
                 .email(request.getEmail())
                 .username(request.getUsername())
@@ -67,30 +65,29 @@ public class AuthService {
                 .build();
 
         userRepository.save(user);
-        return ResponseEntity.ok(new AuthResponse(user.getRole().name(), jwtService.generateToken(user.getUsername(), user.getRole().name())));
-    }
+        return ResponseEntity.ok(new AuthResponse(user.getId(), user.getRole().name(),
+                jwtService.generateToken(user.getEmail(), user.getRole().name())));    }
 
 
     public AuthResponse login(AuthRequest request) {
-        System.out.println("here");
-        // Authenticate user
+
         Authentication authentication = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(request.getEmail(), request.getPassword())
         );
-        System.out.println("hello");
         SecurityContextHolder.getContext().setAuthentication(authentication);
         User user = userRepository.findByEmail(request.getEmail())
                 .orElseThrow(() -> new RuntimeException("User not found"));
 
-        // Generate token
-        String token = jwtService.generateToken(user.getUsername(), user.getRole().name());
-
-        return new AuthResponse(user.getRole().name(), token);
+        user.setLastLogin(LocalDateTime.now());
+        userRepository.save(user);
+        String token = jwtService.generateToken(user.getEmail(), user.getRole().name());
+        return new AuthResponse(user.getId(),user.getRole().name(), token);
     }
 
-    public ResponseEntity<String> logout(String token, HttpServletRequest request) {
+    public String logout(HttpServletRequest request) {
 
         String authHeader = request.getHeader("Authorization");
+        String token = null;
         if (authHeader != null && authHeader.startsWith("Bearer ")) {
             token = authHeader.substring(7);
             BlackListedToken blacklistedToken = new BlackListedToken();
@@ -102,19 +99,6 @@ public class AuthService {
             throw new CustomException("Token must be provided", HttpStatus.BAD_REQUEST);
         }
 
-        String email;
-        try {
-            email = jwtService.getUsernameFromToken(token);
-        } catch (Exception e) {
-            throw new CustomException("Invalid token format", HttpStatus.UNAUTHORIZED);
-        }
-
-        User user = userRepository.findByEmail(email)
-                .orElseThrow(() -> new CustomException("User not found", HttpStatus.NOT_FOUND));
-
-        // Just log or process user-related logic (no token blacklist needed)
-        log.info("User logged out: {}", user.getEmail());
-
-        return ResponseEntity.ok("Logout successful");
+        return "Logout successful";
     }
 }

@@ -1,14 +1,13 @@
 package CloudBalance_Backend.Project.Entity;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 import lombok.Data;
 
 import java.time.LocalDateTime;
 @Data
 @Entity
+@Table(name = "blacklist")
+
 public class BlackListedToken {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

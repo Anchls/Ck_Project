@@ -1,7 +1,5 @@
 package CloudBalance_Backend.Project.Confi;
 
-import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.Jwts;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -36,19 +34,18 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         }
         String token = header.substring(7);
 
-
         try {
             if (!jwtService.ValidateToken(token)) {
                 filterChain.doFilter(request, response);
                 return;
             }
 
-            String username = jwtService.getUsernameFromToken(token);
+            String email = jwtService.getEmailFromToken(token);
             String role = jwtService.getRoleFromToken(token);
-
+            log.info("{} and  {}",email,role);
             UsernamePasswordAuthenticationToken authentication =
                     new UsernamePasswordAuthenticationToken(
-                            username,
+                            email,
                             null,
                             List.of(new SimpleGrantedAuthority("ROLE_" + role))
                     );

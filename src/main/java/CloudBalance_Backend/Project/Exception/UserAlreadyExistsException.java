@@ -10,8 +10,8 @@ public class UserAlreadyExistsException extends RuntimeException {
         log.warn("Attempt to create duplicate user with email: {}", email);
     }
 
-    public UserAlreadyExistsException() {
-        super("User Already Exists");
-        log.warn("Attempt to create duplicate user (email not provided)");
-    }
+//    public UserAlreadyExistsException() {
+//        super("User Already Exists");
+//        log.warn("Attempt to create duplicate user (email not provided)");
+//    }
 }

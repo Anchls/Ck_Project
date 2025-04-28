@@ -1,8 +1,7 @@
 package CloudBalance_Backend.Project.SecurityConfig;
 
 import CloudBalance_Backend.Project.Confi.JwtAuthenticationFilter;
-import CloudBalance_Backend.Project.service.UserDetailsServiceImpl;
-import jakarta.servlet.Filter;
+import CloudBalance_Backend.Project.service.UserService.UserDetailsServiceImpl;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
@@ -32,12 +31,7 @@ import java.util.List;
 public class SecurityConfig {
     @Autowired
     private UserDetailsServiceImpl userDetailsService;
-
     private final JwtAuthenticationFilter jwtAuthenticationFilter;
-//    @Autowired
-//    private JwtAuthenticationFilter authenticationJwtTokenFilter() {
-//        return new JwtAuthenticationFilter();
-//    }
 
     @Bean
     public AuthenticationManager authenticationManager(AuthenticationConfiguration config) throws Exception {
@@ -56,6 +50,8 @@ public class SecurityConfig {
                         .requestMatchers("/api/auth/login").permitAll()
                         .requestMatchers("/api/auth/signup").permitAll()
                         .requestMatchers("/api/auth/logout").permitAll()
+                        .requestMatchers("/api/snowflake/**").permitAll() // Allow your CostExplorer API
+
                         .requestMatchers("/api/common/cost-explorer").hasAnyRole("ADMIN", "CUSTOMER", "READ_ONLY")
                         .requestMatchers("/api/dashboard/**").authenticated()// Allow login/signup without auth
                         .anyRequest().authenticated()
@@ -63,19 +59,16 @@ public class SecurityConfig {
                 .sessionManagement(session -> session
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 );
+
         http.authenticationProvider(authenticationProvider());
-
         http.addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
-
         return http.build();
     }
-
 
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
-
 
     @Bean
     public AuthenticationProvider authenticationProvider() {
