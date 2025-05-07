@@ -4,6 +4,7 @@ import CloudBalance_Backend.Project.Repository.AccountRepository;
 import CloudBalance_Backend.Project.dto.AccountDto.AccountRequest;
 import CloudBalance_Backend.Project.dto.AccountDto.AccountResponse;
 import CloudBalance_Backend.Project.service.AccountService.AccountService;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -26,9 +27,9 @@ public class AccountController {
         return ResponseEntity.ok(accountService.getAllAccounts());
     }
 
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
     @PostMapping("/onboarding")
-    public ResponseEntity<AccountRequest> createAccount(@RequestBody AccountRequest request) {
+    public ResponseEntity<AccountRequest> createAccount(@Valid @RequestBody AccountRequest request) {
         AccountRequest savedAccount = accountService.createAccount(request);
         return ResponseEntity.ok(savedAccount);
     }

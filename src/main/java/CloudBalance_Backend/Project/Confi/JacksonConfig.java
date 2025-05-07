@@ -23,26 +23,15 @@ public class JacksonConfig {
     @Primary
     public ObjectMapper objectMapper() {
         ObjectMapper objectMapper = new ObjectMapper();
-
-        // Configure JavaTimeModule with custom serializers and deserializers
         JavaTimeModule javaTimeModule = new JavaTimeModule();
-
-        // Add custom deserializer for LocalDate (incoming JSON)
         javaTimeModule.addDeserializer(
                 LocalDate.class,
                 new LocalDateDeserializer(DATE_FORMATTER));
-
-        // Add custom serializer for LocalDate (outgoing JSON)
         javaTimeModule.addSerializer(
                 LocalDate.class,
                 new LocalDateSerializer(DATE_FORMATTER));
-
-        // Register the module
         objectMapper.registerModule(javaTimeModule);
-
-        // Disable writing dates as timestamps
         objectMapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
-
         return objectMapper;
     }
 }

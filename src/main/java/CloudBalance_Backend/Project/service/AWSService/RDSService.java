@@ -22,11 +22,9 @@ public class RDSService {
     private final AssumeRoleService assumeRoleService;
     private final AccountRepository accountRepository;
 
-    public List<RDSInstance> fetchRDSInstances(String accountId) {
-        Account account = accountRepository.findByAccountId(accountId)
-                .orElseThrow(() -> new AccountNotFound("Account not found"));
+    public List<RDSInstance> fetchRDSInstances(String roleArn) {
 
-        AwsSessionCredentials sessionCredentials = assumeRoleService.assumeRole(account.getArn());
+        AwsSessionCredentials sessionCredentials = assumeRoleService.assumeRole(roleArn);
         RdsClient rdsClient = RdsClient.builder()
                 .region(Region.US_EAST_1)
                 .credentialsProvider(StaticCredentialsProvider.create(sessionCredentials))

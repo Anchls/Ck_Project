@@ -31,7 +31,6 @@ public class CostRepository {
         this.jdbcTemplate = jdbcTemplate;
         this.namedParameterJdbcTemplate = new NamedParameterJdbcTemplate(jdbcTemplate);
 
-        // Initialize column mapping with your specific mappings
         this.columnMapping = new HashMap<>();
         columnMapping.put("Service", "PRODUCT_PRODUCTNAME");
         columnMapping.put("Instance Type", "MYCLOUD_INSTANCETYPE");
@@ -54,15 +53,7 @@ public class CostRepository {
                                                         LocalDate startDate, LocalDate endDate,
                                                         Map<String, List<String>> filters) {
 
-        // Get the corresponding DB column name for grouping
         String dbColumnName = columnMapping.getOrDefault(groupBy, "PRODUCT_PRODUCTNAME");
-
-        // If no dates provided, use last month as default
-        if (startDate == null || endDate == null) {
-            LocalDate now = LocalDate.now();
-            endDate = now;
-            startDate = now.minusMonths(1);
-        }
 
         // Format the period string
         String periodStr = startDate.format(DateTimeFormatter.ofPattern("dd-MM-yyyy")) +
@@ -90,15 +81,11 @@ public class CostRepository {
 
                 if (values != null && !values.isEmpty() && columnMapping.containsKey(columnKey)) {
                     String filterDbColumnName = columnMapping.get(columnKey);
-
-                    // Build the OR conditions with proper parameter placeholders
                     sql.append("AND (");
-
                     for (int i = 0; i < values.size(); i++) {
                         if (i > 0) {
                             sql.append(" OR ");
                         }
-                        // Use UPPER on both sides to make it case-insensitive
                         sql.append("UPPER(p.").append(filterDbColumnName).append(") = UPPER(:").append(columnKey.replaceAll("\\s+", "_")).append("_").append(i).append(")");
                     }
 
@@ -154,7 +141,6 @@ public class CostRepository {
         // Get the corresponding DB column name
         String dbColumnName = columnMapping.getOrDefault(columnName, "PRODUCT_PRODUCTNAME");
 
-        // Create SQL query to get distinct values
         StringBuilder sql = new StringBuilder();
         sql.append("SELECT DISTINCT p.").append(dbColumnName).append(" as DISTINCT_VALUE ");
         sql.append("FROM \"AWS\".\"COST\".\"COST_EXPLORER\" p ");

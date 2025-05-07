@@ -22,11 +22,9 @@ public class EC2Service {
     private final AssumeRoleService assumeRoleService;
     private final AccountRepository accountRepository;
 
-    public List<EC2Instance> fetchInstances(String accountId) {
-        Account account = accountRepository.findByAccountId(accountId)
-                .orElseThrow(() -> new AccountNotFound("Account not found"));
+    public List<EC2Instance> fetchInstances(String roleArn) {
 
-        AwsSessionCredentials sessionCredentials = assumeRoleService.assumeRole(account.getArn());
+        AwsSessionCredentials sessionCredentials = assumeRoleService.assumeRole(roleArn);
 
         try (Ec2Client ec2Client = Ec2Client.builder()
                 .region(Region.US_EAST_1)

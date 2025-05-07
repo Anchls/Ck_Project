@@ -4,8 +4,6 @@ import lombok.Data;
 
 import java.util.Set;
 
-//user table
-//validations?
 @Data
 public class UserRequestDto {
     private Long id;

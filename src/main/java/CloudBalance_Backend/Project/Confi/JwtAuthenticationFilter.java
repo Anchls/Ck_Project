@@ -1,11 +1,18 @@
 package CloudBalance_Backend.Project.Confi;
 
+import CloudBalance_Backend.Project.Entity.BlackListedToken;
+import CloudBalance_Backend.Project.Exception.BlackListTokenException;
+import CloudBalance_Backend.Project.Repository.BlackListedTokenRepository;
+import io.jsonwebtoken.ExpiredJwtException;
+import io.jsonwebtoken.MalformedJwtException;
+import io.jsonwebtoken.UnsupportedJwtException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -13,6 +20,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 import java.io.IOException;
 import java.util.List;
+import java.util.Optional;
 
 @Component
 @AllArgsConstructor
@@ -20,6 +28,7 @@ import java.util.List;
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     private final JwtService jwtService;
+    private final BlackListedTokenRepository blackListedTokenRepository;
 
     @Override
     protected void doFilterInternal(HttpServletRequest request,
@@ -35,6 +44,13 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         String token = header.substring(7);
 
         try {
+            // check if the token is blacklisted
+
+            Optional<BlackListedToken> blackListedToken = blackListedTokenRepository.findByToken(token);
+            if(blackListedToken.isPresent()){
+                throw new BlackListTokenException("Invalid Token");
+            }
+
             if (!jwtService.ValidateToken(token)) {
                 filterChain.doFilter(request, response);
                 return;
@@ -42,6 +58,8 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
             String email = jwtService.getEmailFromToken(token);
             String role = jwtService.getRoleFromToken(token);
+
+
             log.info("{} and  {}",email,role);
             UsernamePasswordAuthenticationToken authentication =
                     new UsernamePasswordAuthenticationToken(
@@ -50,10 +68,15 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                             List.of(new SimpleGrantedAuthority("ROLE_" + role))
                     );
             SecurityContextHolder.getContext().setAuthentication(authentication);
-        } catch (Exception e) {
+            filterChain.doFilter(request, response);
+        } catch (ExpiredJwtException | MalformedJwtException | UnsupportedJwtException
+                 | IllegalArgumentException | BlackListTokenException e) {
+            response.setStatus(HttpStatus.UNAUTHORIZED.value());
+            response.setContentType("application/json");
+            response.getWriter().write("{\"error\": \"Invalid or expired JWT token\"}");
             System.out.println("JWT Error: " + e.getMessage());
         }
 
-        filterChain.doFilter(request, response);
+
     }
 }

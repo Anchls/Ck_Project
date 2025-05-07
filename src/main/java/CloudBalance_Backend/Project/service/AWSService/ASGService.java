@@ -22,11 +22,9 @@ public class ASGService {
        private final AssumeRoleService assumeRoleService;
        private final AccountRepository accountRepository;
 
-       public List<ASGInstance> fetchASGInstances(String accountId) {
-              Account account = accountRepository.findByAccountId(accountId)
-                      .orElseThrow(() -> new AccountNotFound("Account not found"));
+       public List<ASGInstance> fetchASGInstances(String roleArn) {
 
-              AwsSessionCredentials sessionCredentials = assumeRoleService.assumeRole(account.getArn());
+              AwsSessionCredentials sessionCredentials = assumeRoleService.assumeRole(roleArn);
 
               try (AutoScalingClient autoScalingClient = AutoScalingClient.builder()
                       .region(Region.US_EAST_1)

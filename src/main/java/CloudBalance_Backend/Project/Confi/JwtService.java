@@ -6,7 +6,6 @@ import org.springframework.stereotype.Service;
 import io.jsonwebtoken.*;
 
 import javax.crypto.SecretKey;
-import java.security.Key;
 import java.util.Date;
 
 @Service
@@ -14,7 +13,7 @@ import java.util.Date;
 public class JwtService {
 
     private final String key = "afdskbfdskskjvffvjkvvfd,mfvn,dsm,alkdjvnvkfdjvnvk";
-    private final long EXPIRATION = 15 * 60 * 60 * 1000; // 15 minutes
+    private final long EXPIRATION = 15 * 60 * 1000; // 15 minutes
 
     private SecretKey getKey() {
         return Keys.hmacShaKeyFor(key.getBytes());
@@ -30,33 +29,13 @@ public class JwtService {
                 .compact();
     }
 
-//    public String extractUsername(String token) {
-//        return Jwts.parserBuilder()
-//                .setSigningKey(getKey())
-//                .build()
-//                .parseClaimsJws(token)
-//                .getBody()
-//                .getSubject();
-//    }
-
-    //    public boolean isTokenValid(String token, String username) {
-//        return extractUsername(token).equals(username) && !isTokenExpired(token);
-//    }
     public boolean ValidateToken(String token) {
-        try {
             Jwts.parserBuilder()
                     .setSigningKey(getKey())
                     .build()
                     .parseClaimsJws(token);
             return true;
-        } catch (UnsupportedJwtException e) {
-            log.error("JWT token is unsupported: {}", e.getMessage());
-        } catch (JwtException | IllegalArgumentException e) {
-            log.error("JWT token is invalid: {}", e.getMessage());
-        } catch (RuntimeException e) {
-            log.error("JWT token is malformed: {}", e.getMessage());
-        }
-        return false;
+
     }
 
     public String getRoleFromToken(String token) {

@@ -8,7 +8,7 @@ import lombok.Data;
 @Data
 public class AccountRequest {
 
-    @NotBlank(message = "Account name is required")
+    @NotNull(message = "Account name is required")
     @Size(min = 3, max = 20, message = "Account name must be between 3 and 50 characters")
     private String accountName;
 

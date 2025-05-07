@@ -7,10 +7,8 @@ import java.util.List;
 @Data
 public class CreateUserRequestDto {
         private String username;
-        private  String password;
-        private String email;
         private String role;
+        private String email;
+        private String password;
         private List<Long> accountIds;
-
-
 }

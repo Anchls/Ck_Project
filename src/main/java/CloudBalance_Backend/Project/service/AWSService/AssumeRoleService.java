@@ -15,7 +15,6 @@ public class AssumeRoleService {
 
     public AwsSessionCredentials assumeRole(String arn) {
 
-        try {
             AssumeRoleRequest roleRequest = AssumeRoleRequest.builder()
                     .roleArn(arn)
                     .roleSessionName("session-" + System.currentTimeMillis())
@@ -28,10 +27,7 @@ public class AssumeRoleService {
                     assumeRoleResponse.credentials().secretAccessKey(),
                     assumeRoleResponse.credentials().sessionToken()
             );
-        } catch (StsException e) {
-            e.printStackTrace();
-            throw new RuntimeException("Failed to assume role: " + e.awsErrorDetails().errorMessage());
-        }
+
     }
     }
 

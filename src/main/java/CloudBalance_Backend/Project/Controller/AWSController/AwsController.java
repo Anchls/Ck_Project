@@ -23,33 +23,20 @@ public class AwsController {
 
     @GetMapping("/ec2/instances")
     public ResponseEntity<List<EC2Instance>> getEc2Instances(@RequestParam String roleArn) {
-        String accountId = extractAccountIdFromArn(roleArn);
-        List<EC2Instance> instances = ec2Service.fetchInstances(accountId);
+        List<EC2Instance> instances = ec2Service.fetchInstances(roleArn);
         return ResponseEntity.ok(instances);
     }
 
     @GetMapping("/rds/instances")
     public ResponseEntity<List<RDSInstance>> getRdsInstances(@RequestParam String roleArn) {
-        String accountId = extractAccountIdFromArn(roleArn);
-        List<RDSInstance> instances = rdsService.fetchRDSInstances(accountId);
+        List<RDSInstance> instances = rdsService.fetchRDSInstances(roleArn);
         return ResponseEntity.ok(instances);
     }
 
     @GetMapping("/asg/instances")
     public ResponseEntity<List<ASGInstance>> getAsgInstances(@RequestParam String roleArn) {
-        String accountId = extractAccountIdFromArn(roleArn);
-        List<ASGInstance> instances = asgService.fetchASGInstances(accountId);
+        List<ASGInstance> instances = asgService.fetchASGInstances(roleArn);
         return ResponseEntity.ok(instances);
     }
 
-    // ✅ Utility method to extract accountId from ARN
-    private String extractAccountIdFromArn(String arn) {
-        // Example ARN: arn:aws:iam::054062525424:role/your-role-name
-        String[] parts = arn.split(":");
-        if (parts.length > 4) {
-            return parts[4];
-        } else {
-            throw new IllegalArgumentException("Invalid ARN format: " + arn);
-        }
-    }
 }

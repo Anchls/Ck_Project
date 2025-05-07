@@ -13,32 +13,10 @@ import java.util.Map;
 @RestController
 @RequestMapping("/api/snowflake")
 @RequiredArgsConstructor
-@CrossOrigin(origins = "*")
 public class CostExplorerController {
 
     private final CostExplorerService snowflakeService;
 
-//group by  api  hogi  filter k nam of group by k nam same hai to dono k  lie same api
-
-//    @GetMapping("/usage-summary")
-//    public ResponseEntity<Map<String, Object>> getUsageSummaryForAccount(@RequestParam Long accountId) {
-//        List<Double> usageAmounts = snowflakeService.getUsageAmountsForAccount(accountId);
-//        Map<String, Object> response = new HashMap<>();
-//        response.put("accountId", accountId);
-//        response.put("usageAmounts", usageAmounts);
-//        return ResponseEntity.ok(response);
-//    }
-////
-//    @GetMapping("/filters/columns")
-//    public List<String> getAllColumns() {
-//        return snowflakeService.getColumnNames();
-//    }
-//
-//    @GetMapping("/filters/values")
-//    public List<String> getValuesForColumn(@RequestParam String columnName) {
-//        return snowflakeService.getValuesByColumn(columnName);
-//    }
-//har column k liye distinct value
     @PostMapping("/{accountId}/filter")
     public ResponseEntity<FilterResponse> getDistinctValues(
             @PathVariable Long accountId,
@@ -49,7 +27,6 @@ public class CostExplorerController {
     }
 
 
-    //data grouping or multiple filter k sath
     @PostMapping("/{accountId}")
     public ResponseEntity<CostResponse> getGroupedCosts(
             @PathVariable Long accountId,

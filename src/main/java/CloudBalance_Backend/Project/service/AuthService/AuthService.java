@@ -45,44 +45,23 @@ public class AuthService {
     JwtService jwtService;
 
 
-    public ResponseEntity<?> signup(SignupRequest request) {
-        if (userRepository.existsByUsername(request.getUsername())) {
-            return ResponseEntity
-                    .badRequest()
-                    .body(new MessageResponse("Error: Username is already taken!"));
-        }
-        if (userRepository.existsByEmail(request.getEmail())) {
-            return ResponseEntity
-                    .badRequest()
-                    .body(new MessageResponse("Error: Email is already in use!"));
-        }
-
-        User user = User.builder()
-                .email(request.getEmail())
-                .username(request.getUsername())
-                .password(passwordEncoder.encode(request.getPassword()))
-                .role(request.getRole())
-                .build();
-
-        userRepository.save(user);
-        return ResponseEntity.ok(new AuthResponse(user.getId(), user.getRole().name(),
-                jwtService.generateToken(user.getEmail(), user.getRole().name())));    }
-
-
     public AuthResponse login(AuthRequest request) {
 
         Authentication authentication = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(request.getEmail(), request.getPassword())
         );
         SecurityContextHolder.getContext().setAuthentication(authentication);
+
         User user = userRepository.findByEmail(request.getEmail())
-                .orElseThrow(() -> new RuntimeException("User not found"));
+                .orElseThrow(() -> new CustomException("User not found", HttpStatus.NOT_FOUND));
 
         user.setLastLogin(LocalDateTime.now());
         userRepository.save(user);
         String token = jwtService.generateToken(user.getEmail(), user.getRole().name());
-        return new AuthResponse(user.getId(),user.getRole().name(), token);
+        return new AuthResponse(user.getId(), user.getRole().name(), token);
     }
+
+
 
     public String logout(HttpServletRequest request) {
 

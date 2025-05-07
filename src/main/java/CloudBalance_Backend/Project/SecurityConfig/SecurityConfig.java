@@ -43,17 +43,12 @@ public class SecurityConfig {
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
                 .csrf(csrf -> csrf.disable())
-                .cors(cors ->
-                        cors.configurationSource(corsConfigurationSource()))
+                .cors(cors -> cors.configurationSource(corsConfigurationSource()))
+                .formLogin(form -> form.disable())
+                .httpBasic(httpBasic -> httpBasic.disable())
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/api/users/create").permitAll()
                         .requestMatchers("/api/auth/login").permitAll()
-                        .requestMatchers("/api/auth/signup").permitAll()
-                        .requestMatchers("/api/auth/logout").permitAll()
-                        .requestMatchers("/api/snowflake/**").permitAll() // Allow your CostExplorer API
-
                         .requestMatchers("/api/common/cost-explorer").hasAnyRole("ADMIN", "CUSTOMER", "READ_ONLY")
-                        .requestMatchers("/api/dashboard/**").authenticated()// Allow login/signup without auth
                         .anyRequest().authenticated()
                 )
                 .sessionManagement(session -> session

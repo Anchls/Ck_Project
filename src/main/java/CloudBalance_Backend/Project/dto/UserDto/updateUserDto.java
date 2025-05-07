@@ -13,5 +13,5 @@ import java.util.List;
 public class updateUserDto {
     private String username;
     private String role;
-    private List<Long> assignAccountIds;
+    private List<Long> accountIds;
 }
